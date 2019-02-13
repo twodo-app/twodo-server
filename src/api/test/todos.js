@@ -7,17 +7,25 @@ const {
 
 module.exports = {
   get: {
+    // GET all todos in the database.
     all: db => (_, res) => {
       const todos = db.get('todos')
-        .value()
+        .value()  // It is important to end all db queries with either .value()
+                  // or .write() otherwise you won't get the data you were expecting!!
 
+      // Chain methods to set the response status code
+      // and then fire a response with the todos json as
+      // the body. 
+      // It's important to call .json() last as it fires off
+      // the response.  
       res.status(OK).json(todos)
     },
-    //
+    // GET all todos and filter according to some query params.
     filtered: db => (req, res) => {
       res.json(`This is all the todos filtered by: ${Object.keys(req.query)}`)
     },
-    //
+    // GET a specific todo by id
+    // In practice this isn't as useful as the POST counterpart.
     byID : db => (req, res) => {
       const todo = db.get('todos')
         .find({ id: req.params.id })
@@ -29,17 +37,19 @@ module.exports = {
     }
   },
   post: {
+    // 
     create: db => (req, res) => {
+      // Return early if the request has no body.
       if (!req.body)
         return res.sendStatus(BAD_REQUEST)
 
       const todo = {
-        id          : shortid.generate(),
-        title       : req.body.title || '',
-        description : req.body.description || '',
-        priority    : req.body.priority || 0,
-        snoozed     : req.body.snoozed || false,
-        complete    : req.body.complete || false
+        id          : shortid.generate(),         // All of the fields in a todo
+        title       : req.body.title || '',       // are technically optional. So
+        description : req.body.description || '', // there is a mechanism to fall back
+        priority    : req.body.priority || 0,     // to some default values if a field isn't
+        snoozed     : req.body.snoozed || false,  // supplied. Unexpected / extra fields
+        complete    : req.body.complete || false  // are ignored without error.
       }
 
       db.get('todos').push(todo).write()
@@ -52,9 +62,17 @@ module.exports = {
         .find({ id: req.params.id })
         .value()
 
+      // Return early if the todo wasn't found.
+      // We can't update what doesn't exist!
       if (!todo)
         return res.sendStatus(NOT_FOUND)
 
+      // Iterate over each key in the existing *todo* and update its
+      // value according to corresponding value in the request body. If
+      // the body doesn't have that particular key, just fall back to the
+      // existing todo data.
+      // This is a bad idea(tm) as important keys such as ID and date created
+      // can be overwritten. This should be handled better in production!!
       for (const key in todo) {
         todo[key] = req.body[key] || todo[key]
       }
