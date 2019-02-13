@@ -21,6 +21,10 @@ const ROOT    = `/api/${VERSION}`
 // in the database will be synchronous.
 const db = lowdb( new Adapter(`${DB_NAME}.json`))
 
+// Generate some servicable defaults if we're running the test
+// version of the api. Otherwise initalise an empty database
+// if one does not already exist.
+// .defaults does *not* overwrite data in an existing database.
 VERSION !== 'test'
   ? db.defaults({ todos: [] }).write()
   : db.defaults({
@@ -33,19 +37,22 @@ VERSION !== 'test'
   }).write()
 
 //---------------------------------------------------------
-// app
 const app = express()
+      // Parse 'application/json' request bodies as native json
       app.use(bodyParser.json())  
-
+// Passing in VERSION lets the api module decide what version
+// of the api to expose. This is useful as a mock api for client
+// testing may not need to be the same as the api exposed in
+// production.  
 const api = require('./api')(VERSION)
 
-
-app.get(`${ROOT}/todos`, api.todos.get.all(db))
-app.get(`${ROOT}/todos/filter?`, api.todos.get.filtered(db))
-app.get(`${ROOT}/todos/:id`, api.todos.get.byID(db))
-
-app.post(`${ROOT}/todos`, api.todos.post.create(db))
-app.post(`${ROOT}/todos/:id`, api.todos.post.update(db))
+// Handle GET requests
+app.get( `${ROOT}/todos`, api.todos.get.all(db) )
+app.get( `${ROOT}/todos/filter?`, api.todos.get.filtered(db) )
+app.get( `${ROOT}/todos/:id`, api.todos.get.byID(db) )
+// Handle POST requests
+app.post( `${ROOT}/todos`, api.todos.post.create(db) )
+app.post( `${ROOT}/todos/:id`, api.todos.post.update(db) )
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
