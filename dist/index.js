@@ -7,6 +7,6 @@ module.exports={todos:require("./todos.js")};
 },{"./todos.js":"jx0t"}],"VO5s":[function(require,module,exports) {
 const e={test:require("./test/index.js"),v1:require("./v1/index.js")};module.exports=(t=>{switch(t){case"test":return console.log("loading test api"),e.test;case"v1":return console.log("loading v1 api"),e.v1;default:return e.test}});
 },{"./test/index.js":"6KBv","./v1/index.js":"Ouoj"}],"Focm":[function(require,module,exports) {
-const e=require("express"),o=require("lowdb"),t=require("lowdb/adapters/FileSync"),s="db",r=3e3,d=process.env.VERSION,i=`/api/${d}`,n=o(new t("db.json"));n.defaults({todos:[]}).write();const l=e(),g=require("./api")(d);l.get(`${i}/todos`,g.todos.get.all(n)),l.get(`${i}/todos/filter?`,g.todos.get.filtered(n)),l.get(`${i}/todos/:id`,g.todos.get.byID(n)),l.post(`${i}/todos`,g.todos.post(n)),l.listen(3e3,()=>{console.log("Server running on port 3000")});
+const e=require("express"),o=require("lowdb"),t="test"===process.env.version?require("lowdb/adapters/Memory"):require("lowdb/adapters/FileSync"),s="db",r=3e3,d=process.env.VERSION,i=`/api/${d}`,n=o(new t("db.json"));n.defaults({todos:[]}).write();const l=e(),p=require("./api")(d);l.get(`${i}/todos`,p.todos.get.all(n)),l.get(`${i}/todos/filter?`,p.todos.get.filtered(n)),l.get(`${i}/todos/:id`,p.todos.get.byID(n)),l.post(`${i}/todos`,p.todos.post(n)),l.listen(3e3,()=>{console.log("Server running on port 3000")});
 },{"./api":"VO5s"}]},{},["Focm"], null)
 //# sourceMappingURL=/index.map

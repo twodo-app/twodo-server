@@ -2,7 +2,9 @@
 // NPM Packages
 const express   = require('express')                  // express is our json server
 const lowdb     = require('lowdb')                    // lowdb is a lightweight json db
-const FileSync  = require('lowdb/adapters/FileSync')  // adapters define where and how to save our db
+const Adapter   = process.env.version === 'test'
+  ? require('lowdb/adapters/Memory')                  // In test mode the db is saved in memory
+  : require('lowdb/adapters/FileSync')                // Otherwise write the db to disk
 
 //---------------------------------------------------------
 // Constants
@@ -15,7 +17,7 @@ const ROOT    = `/api/${VERSION}`
 // db
 // Open the database using the FileSync adapter. Every operation
 // in the database will be synchronous.
-const db = lowdb( new FileSync(`${DB_NAME}.json`))
+const db = lowdb( new Adapter(`${DB_NAME}.json`))
 
 // Write some sensible defaults to the database if it is
 // empty.
