@@ -5,8 +5,8 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "parcel build src/index.js --target node",
-    "watch": "parcel watch src/index.js",
-    "start": "npm run build && node dist/index.js"
+    "start:dev": "npm run build && VERSION=test node dist/index.js",
+    "start:prod": "npm run build && VERSION=v1 node dist/index.js"
   },
   "author": "",
   "license": "MIT",

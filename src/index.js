@@ -8,7 +8,7 @@ const FileSync  = require('lowdb/adapters/FileSync')  // adapters define where a
 // Constants
 const DB_NAME = 'db'
 const PORT    = 3000
-const VERSION = 'v1'
+const VERSION = process.env.VERSION
 const ROOT    = `/api/${VERSION}`
 
 //---------------------------------------------------------
@@ -25,10 +25,7 @@ db.defaults({ todos: [] })
 //---------------------------------------------------------
 // app
 const app = express()
-const api = {
-  // Remember to bump 'v1' to VERSION whenever it changes!!
-  todos: require('./routes/v1/todos.js')
-}
+const api = require('./api')(VERSION)
 
 app.get(`${ROOT}/todos`, api.todos.get.all(db))
 app.get(`${ROOT}/todos/filter?`, api.todos.get.filtered(db))
