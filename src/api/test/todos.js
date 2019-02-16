@@ -23,7 +23,24 @@ module.exports = {
     },
     // GET all todos and filter according to some query params.
     filtered: db => (req, res) => {
-      res.json(`This is all the todos filtered by: ${Object.keys(req.query)}`)
+      const filters = []
+
+      if (req.query.complete === 'true' || req.query.complete === 'false')
+        filters.push(x => x.complete === JSON.parse(req.query.complete))
+  
+      if (req.query.snoozed === 'true' || req.query.complete === 'false')
+        filters.push(x => x.snoozed === JSON.parse(req.query.snoozed))
+
+      if (!isNaN( parseInt(req.query.priority )))
+        filters.push(x => x.priority === parseInt(req.query.priority))
+
+      const todos = filters
+        .reduce((todos, predicate) => todos.filter(predicate), db.get('todos'))
+        .value()
+
+      todos.length > 0
+        ? res.status(200).json(todos)
+        : res.status(404).json(todos)
     },
     // GET a specific todo by id
     // In practice this isn't as useful as the POST counterpart.
