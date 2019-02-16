@@ -8,6 +8,7 @@ const lowdb       = require('lowdb')                // lowdb is a lightweight js
 const Adapter     = process.env.VERSION === 'test'
   ? require('lowdb/adapters/Memory')                // In test mode the db is saved in memory
   : require('lowdb/adapters/FileSync')              // Otherwise write the db to disk
+const Todo        = require('./todo.js')
 
 //---------------------------------------------------------
 // Constants
@@ -29,12 +30,7 @@ const db = lowdb( new Adapter(`${DB_NAME}.json`))
 VERSION !== 'test'
   ? db.defaults({ todos: [] }).write()
   : db.defaults({
-    todos: [
-      { id: shortid.generate(), title: 'Do a twodoo', description: '', priority: 4, snoozed: false, complete: false },
-      { id: shortid.generate(), title: 'Do a mewtwo', description: '', priority: 2, snoozed: false, complete: false },
-      { id: shortid.generate(), title: 'Do a poopoo', description: '', priority: 3, snoozed: false, complete: false },
-      { id: shortid.generate(), title: 'Do a bamboo', description: '', priority: 0, snoozed: false, complete: false }
-    ]
+    todos: [ Todo.mock(), Todo.mock(), Todo.mock(), Todo.mock() ]
   }).write()
 
 //---------------------------------------------------------
