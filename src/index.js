@@ -2,6 +2,7 @@
 // NPM Packages
 const express     = require('express')              // express is our json server
 const bodyParser  = require('body-parser')          // express middleware for parsing json bodies
+const cors        = require('cors')                 // allows cross origin requests
 const shortid     = require('shortid')              // UUID generator
 const lowdb       = require('lowdb')                // lowdb is a lightweight json db
 const Adapter     = process.env.VERSION === 'test'
@@ -38,8 +39,10 @@ VERSION !== 'test'
 
 //---------------------------------------------------------
 const app = express()
-      // Parse 'application/json' request bodies as native json
-      app.use(bodyParser.json())  
+// Parse 'application/json' request bodies as native json
+app.use(bodyParser.json())  
+// Allow cross origin requests in dev mode
+if (VERSION === 'dev') app.use(cors())
 // Passing in VERSION lets the api module decide what version
 // of the api to expose. This is useful as a mock api for client
 // testing may not need to be the same as the api exposed in
