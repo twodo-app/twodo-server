@@ -4,6 +4,7 @@ const {
   CREATED,
   BAD_REQUEST, 
   NOT_FOUND } = require('../status.js')
+const Todo    = require('../../todo.js')
 
 module.exports = {
   get: {
@@ -43,14 +44,13 @@ module.exports = {
       if (!req.body)
         return res.sendStatus(BAD_REQUEST)
 
-      const todo = {
-        id          : shortid.generate(),         // All of the fields in a todo
-        title       : req.body.title || '',       // are technically optional. So
-        description : req.body.description || '', // there is a mechanism to fall back
-        priority    : req.body.priority || 0,     // to some default values if a field isn't
-        snoozed     : req.body.snoozed || false,  // supplied. Unexpected / extra fields
-        complete    : req.body.complete || false  // are ignored without error.
+      // Validate the request body to check it has
+      // the required fields and types.
+      if (!Todo.validate(req.body)) {
+        return res.sendStatus(BAD_REQUEST)
       }
+
+      const todo = Todo.create(req.body)
 
       db.get('todos').push(todo).write()
 
@@ -66,6 +66,16 @@ module.exports = {
       // We can't update what doesn't exist!
       if (!todo)
         return res.sendStatus(NOT_FOUND)
+
+      // Return early if the request has no body.
+      if (!req.body)
+        return res.sendStatus(BAD_REQUEST)
+
+      // Validate the request body to check it has
+      // the required fields and types.
+      if (!Todo.validate(req.body)) {
+        return res.sendStatus(BAD_REQUEST)
+      }
 
       // Iterate over each key in the existing *todo* and update its
       // value according to corresponding value in the request body. If
