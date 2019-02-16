@@ -30,9 +30,13 @@ const requiredSchema = {
 // in the todo. In production this should be more advanced,
 // checking both the type and the value, but fo test purposes
 // this is servicable.
-const validate = todo => 
-  Object.keys(completeSchema).reduce( (valid, key) => 
-    (typeof todo[key] === typeof completeSchema[key]() || typeof todo[key] === typeof requiredSchema[key]()) && valid, true )
+const validateRequired = todo =>
+  Object.keys(requiredSchema)
+    .reduce((valid, key) => typeof todo[key] === typeof requiredSchema[key]() && valid, true)
+
+const validateComplete= todo =>
+  Object.keys(completeSchema)
+    .reduce((valid, key) => typeof todo[key] === typeof completeSchema[key]() && valid, true)
 
 // Takes a todo with all the fields outlined in requiredSchema
 // and fills in the rest with some sensible defaults.
@@ -62,4 +66,4 @@ const mock = () => create({
 })
 
 //---------------------------------------------------------
-module.exports = { validate, create, mock }
+module.exports = { validateRequired, validateComplete, create, mock }

@@ -46,7 +46,7 @@ module.exports = {
 
       // Validate the request body to check it has
       // the required fields and types.
-      if (!Todo.validate(req.body)) {
+      if (!Todo.validateRequired(req.body)) {
         return res.sendStatus(BAD_REQUEST)
       }
 
@@ -73,7 +73,7 @@ module.exports = {
 
       // Validate the request body to check it has
       // the required fields and types.
-      if (!Todo.validate(req.body)) {
+      if (!Todo.validateComplete(req.body)) {
         return res.sendStatus(BAD_REQUEST)
       }
 
