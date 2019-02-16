@@ -37,16 +37,16 @@ const validate = todo =>
 // Takes a todo with all the fields outlined in requiredSchema
 // and fills in the rest with some sensible defaults.
 const create = todo => ({
-  id          = shortid.generate(),
-  title       = todo.title,
-  description = todo.description,
-  priority    = todo.priority,
-  created     = todo.created,
-  due         = todo.due,
-  estimated   = todo.estimated,
-  timetaken   = 0,
-  snoozed     = false,
-  complete    = false
+  id          : shortid.generate(),
+  title       : todo.title,
+  description : todo.description,
+  priority    : todo.priority,
+  created     : todo.created,
+  due         : todo.due,
+  estimated   : todo.estimated,
+  timetaken   : 0,
+  snoozed     : false,
+  complete    : false
 })
 
 // Used to generate some mock todos for testing purposes.
