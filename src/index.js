@@ -38,7 +38,7 @@ const app = express()
 // Parse 'application/json' request bodies as native json
 app.use(bodyParser.json())  
 // Allow cross origin requests in dev mode
-if (VERSION === 'dev') app.use(cors())
+if (VERSION === 'test') app.use(cors())
 // Passing in VERSION lets the api module decide what version
 // of the api to expose. This is useful as a mock api for client
 // testing may not need to be the same as the api exposed in
