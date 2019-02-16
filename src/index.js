@@ -8,7 +8,7 @@ const lowdb       = require('lowdb')                // lowdb is a lightweight js
 const Adapter     = process.env.VERSION === 'test'
   ? require('lowdb/adapters/Memory')                // In test mode the db is saved in memory
   : require('lowdb/adapters/FileSync')              // Otherwise write the db to disk
-const Todo        = require('./todo.js')
+const Todo        = require('./api/todo.js')
 
 //---------------------------------------------------------
 // Constants

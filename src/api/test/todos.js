@@ -4,7 +4,7 @@ const {
   CREATED,
   BAD_REQUEST, 
   NOT_FOUND } = require('../status.js')
-const Todo    = require('../../todo.js')
+const Todo    = require('../todo.js')
 
 module.exports = {
   get: {
