@@ -25,6 +25,12 @@ const requiredSchema = {
   estimated   : Number,
 }
 
+const staticFields = [
+  'id',
+  'created',
+  'timetaken'
+]
+
 //---------------------------------------------------------
 // A simple validation that checks the types of each field
 // in the todo. In production this should be more advanced,
@@ -34,9 +40,14 @@ const validateRequired = todo =>
   Object.keys(requiredSchema)
     .reduce((valid, key) => typeof todo[key] === typeof requiredSchema[key]() && valid, true)
 
-const validateComplete= todo =>
+const validateComplete = todo =>
   Object.keys(completeSchema)
     .reduce((valid, key) => typeof todo[key] === typeof completeSchema[key]() && valid, true)
+
+// Validation check to ensure the fields defined in staticFields
+// remain unchanged when updating a todo.
+const validateUpdate = (newTodo, oldTodo) =>
+  staticFields.reduce((valid, key) => newTodo[key] === oldTodo[key] && valid, true)
 
 // Takes a todo with all the fields outlined in requiredSchema
 // and fills in the rest with some sensible defaults.
@@ -66,4 +77,9 @@ const mock = () => create({
 })
 
 //---------------------------------------------------------
-module.exports = { validateRequired, validateComplete, create, mock }
+module.exports = { 
+  validateRequired, 
+  validateComplete, 
+  validateUpdate,
+  create, 
+  mock }

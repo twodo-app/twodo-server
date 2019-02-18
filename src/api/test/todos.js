@@ -90,9 +90,8 @@ module.exports = {
 
       // Validate the request body to check it has
       // the required fields and types.
-      if (!Todo.validateComplete(req.body)) {
+      if (!Todo.validateComplete(req.body))
         return res.sendStatus(BAD_REQUEST)
-      }
 
       // Iterate over each key in the existing *todo* and update its
       // value according to corresponding value in the request body. If
@@ -100,9 +99,17 @@ module.exports = {
       // existing todo data.
       // This is a bad idea(tm) as important keys such as ID and date created
       // can be overwritten. This should be handled better in production!!
+      const updatedTodo = {}
       for (const key in todo) {
-        todo[key] = req.body[key] || todo[key]
+        updatedTodo[key] = req.body.hasOwnProperty(key)
+          ? req.body[key]
+          : todo[key]
       }
+
+      // Validation check to ensure no static fields such as ID or date created
+      // were overwritten.
+      if (!Todo.validateUpdate(updatedTodo, todo))
+        return res.sendStatus(BAD_REQUEST)
 
       db.get('todos') 
         .find({ id: req.params.id })
