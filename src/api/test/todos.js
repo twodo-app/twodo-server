@@ -113,10 +113,10 @@ module.exports = {
 
       db.get('todos') 
         .find({ id: req.params.id })
-        .assign(todo)
+        .assign(updatedTodo)
         .write()
 
-      res.status(OK).json(todo)
+      res.status(OK).json(updatedTodo)
     }
   },
   delete: {
