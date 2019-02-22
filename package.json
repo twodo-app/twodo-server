@@ -6,7 +6,8 @@
   "scripts": {
     "build": "parcel build src/index.js --target node",
     "start:test": "npm run build && VERSION=test node dist/index.js",
-    "start:prod": "npm run build && VERSION=v1 node dist/index.js"
+    "start:prod": "npm run build && VERSION=v1 node dist/index.js",
+    "start": "npm run start:prod"
   },
   "author": "",
   "license": "MIT",
