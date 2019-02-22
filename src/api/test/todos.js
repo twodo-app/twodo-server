@@ -118,5 +118,17 @@ module.exports = {
 
       res.status(OK).json(todo)
     }
+  },
+  delete: {
+    byID: db => (req, res) => {
+      if (!db.get('todos').find({ id: req.params.id }).value())
+        return res.sendStatus(NOT_FOUND)
+
+      db.get('todos')
+        .remove({ id: req.params.id })
+        .write()
+
+      res.sendStatus(OK)
+    }
   }
 }

@@ -18,7 +18,6 @@ const VERSION = process.env.VERSION
 const ROOT    = `/api/${VERSION}`
 
 //---------------------------------------------------------
-// db
 // Open the database using the FileSync adapter. Every operation
 // in the database will be synchronous.
 const db = lowdb( new Adapter(`${DB_NAME}.json`))
@@ -52,7 +51,9 @@ app.get( `${ROOT}/todos/:id`, api.todos.get.byID(db) )
 // Handle POST requests
 app.post( `${ROOT}/todos`, api.todos.post.create(db) )
 app.post( `${ROOT}/todos/:id`, api.todos.post.update(db) )
+// Handle DELETE requests
+app.delete( `${ROOT}/todos/:id`, api.todos.delete.byID(db) )
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on port ${PORT}`)
 })
