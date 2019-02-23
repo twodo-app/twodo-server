@@ -5,6 +5,7 @@ const shortid = require('shortid') // UUID generator
 //---------------------------------------------------------
 const completeSchema = {
   id          : String,
+  userid      : String,
   title       : String,
   description : String,
   priority    : Number,
@@ -17,6 +18,7 @@ const completeSchema = {
 }
 
 const requiredSchema = {
+  userid      : String,
   title       : String,
   description : String,
   priority    : Number,
@@ -27,6 +29,7 @@ const requiredSchema = {
 
 const staticFields = [
   'id',
+  'userid',
   'created',
   'timetaken'
 ]
@@ -53,6 +56,7 @@ const validateUpdate = (newTodo, oldTodo) =>
 // and fills in the rest with some sensible defaults.
 const create = todo => ({
   id          : shortid.generate(),
+  userid      : todo.userid,
   title       : todo.title,
   description : todo.description,
   priority    : todo.priority,
@@ -68,6 +72,7 @@ const create = todo => ({
 // This lets us test some api GET requests without having
 // to POST some todos from the client first.
 const mock = () => create({
+  userid      : 'test-user',
   title       : 'I am a mock twodo',
   description : 'Use me to test the API!',
   priority    : (Math.random() * 3) | 0,
