@@ -1,13 +1,10 @@
 //---------------------------------------------------------
 // NPM Packages
-const express     = require('express')              // express is our json server
-const bodyParser  = require('body-parser')          // express middleware for parsing json bodies
-const cors        = require('cors')                 // allows cross origin requests
-const shortid     = require('shortid')              // UUID generator
-const lowdb       = require('lowdb')                // lowdb is a lightweight json db
-const Adapter     = process.env.VERSION === 'test'
-  ? require('lowdb/adapters/Memory')                // In test mode the db is saved in memory
-  : require('lowdb/adapters/FileSync')              // Otherwise write the db to disk
+const express     = require('express')                // express is our json server
+const bodyParser  = require('body-parser')            // express middleware for parsing json bodies
+const cors        = require('cors')                   // allows cross origin requests
+const lowdb       = require('lowdb')                  // lowdb is a lightweight json db
+const Adapter     = require('lowdb/adapters/Memory')  // In test mode the db is saved in memory
 const Todo        = require('./api/todo.js')
 
 //---------------------------------------------------------
@@ -27,7 +24,7 @@ const db = lowdb( new Adapter(`${DB_NAME}.json`))
 // if one does not already exist.
 // .defaults does *not* overwrite data in an existing database.
 VERSION !== 'test'
-  ? db.defaults({ todos: [] }).write()
+  ? db.defaults({ todos: [], users: [ 'andy', 'trymunx' ] }).write()
   : db.defaults({
     todos: [ Todo.mock(), Todo.mock(), Todo.mock(), Todo.mock() ]
   }).write()
@@ -35,24 +32,41 @@ VERSION !== 'test'
 //---------------------------------------------------------
 const app = express()
 // Parse 'application/json' request bodies as native json
-app.use(bodyParser.json())  
+app.use(bodyParser.json()) 
+app.use(cors()) 
 // Allow cross origin requests in dev mode
-if (VERSION === 'test') app.use(cors())
+// if (VERSION === 'test') app.use(cors())
 // Passing in VERSION lets the api module decide what version
 // of the api to expose. This is useful as a mock api for client
 // testing may not need to be the same as the api exposed in
 // production.  
 const api = require('./api')(VERSION)
 
-// Handle GET requests
-app.get( `${ROOT}/todos`, api.todos.get.all(db) )
-app.get( `${ROOT}/todos/filter?`, api.todos.get.filtered(db) )
-app.get( `${ROOT}/todos/:id`, api.todos.get.byID(db) )
-// Handle POST requests
-app.post( `${ROOT}/todos`, api.todos.post.create(db) )
-app.post( `${ROOT}/todos/:id`, api.todos.post.update(db) )
-// Handle DELETE requests
-app.delete( `${ROOT}/todos/:id`, api.todos.delete.byID(db) )
+switch (VERSION) { 
+  case 'test':
+    // Handle GET requests
+    app.get( `${ROOT}/todos`, api.todos.get.all(db) )
+    app.get( `${ROOT}/todos/filter?`, api.todos.get.filtered(db) )
+    app.get( `${ROOT}/todos/:id`, api.todos.get.byID(db) )
+    // Handle POST requests
+    app.post( `${ROOT}/todos`, api.todos.post.create(db) )
+    app.post( `${ROOT}/todos/:id`, api.todos.post.update(db) )
+    // Handle DELETE requests
+    app.delete( `${ROOT}/todos/:id`, api.todos.delete.byID(db) )
+    break
+  case 'v1':
+    // Handle GET requests
+    app.get( `${ROOT}/user`, api.user.get.newUser(db) )
+    app.get( `${ROOT}/todos/:user`, api.todos.get.byUser(db) )
+    app.get( `${ROOT}/todos/:user/:id`, api.todos.get.byID(db) )
+    app.get( `${ROOT}/todos/:user/filter?`, api.todos.get.filtered(db) )
+    // Handle POST requests
+    app.post( `${ROOT}/todos`, api.todos.post.create(db) )
+    app.post( `${ROOT}/todos/:user/:id`, api.todos.post.update(db) )
+    // Handle DELETE requests
+    app.delete( `${ROOT}/todos/:user/:id`, api.todos.delete.byID(db) )
+    break
+}
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on port ${PORT}`)
