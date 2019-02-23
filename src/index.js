@@ -68,6 +68,6 @@ switch (VERSION) {
     break
 }
 
-app.listen(PORT, '0.0.0.0', () => {
+app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
