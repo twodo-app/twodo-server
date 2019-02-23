@@ -70,4 +70,16 @@ switch (VERSION) {
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
+
+  // Refresh the database of anonymous todos every 24 hours.
+  if (VERSION !== 'test')
+    setInterval(() => {
+      db.get('todos')
+        .filter(todo => todo.userid === 'andy' || todo.userid === 'trymunx')
+        .write()
+
+      db.get('users')
+        .filter(user => user === 'andy' || user === 'trymynx')
+        .write()
+    }, 60 * 60 * 24)
 })
